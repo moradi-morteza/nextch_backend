@@ -20,6 +20,7 @@ use Illuminate\Validation\ValidationException;
 
 class AuthController extends Controller
 {
+    const MINI_APP_TOKEN = "7222156665:AAEuRLQ4fZdyH8A_QcSLbcJxWJVHrLCw2HE";
     public function register(Request $request)
     {
         $request->validate([
@@ -190,5 +191,52 @@ class AuthController extends Controller
             'token_type' => 'Bearer',
             'expires_at' => $token->expires_at,
         ]);
+    }
+
+    # Telegram mini app
+    # this method responsible to register and login users from telegram mini app
+    public function tmaAuthentication(Request $request){
+
+        $authorizationHeader = $request->header('Authorization');
+        // Check if the Authorization header starts with 'tma'
+        if (!str_starts_with($authorizationHeader, 'tma')) {
+            return response()->json(['error' => 'Invalid authorization header'], 401);
+        }
+        // Extract the init data from the Authorization header
+        $initData = substr($authorizationHeader, 4);
+
+        if (ValidateTelegramInitData::isSafe(self::MINI_APP_TOKEN, $initData)) {
+
+            parse_str($initData, $pairs);
+            $user_data = json_decode($pairs['user'],true);
+            $telegram_user_id = $user_data['id'];
+            $telegram_first_name = $user_data['first_name'];
+            $telegram_last_name = $user_data['last_name'];
+            $telegram_username = $user_data['username'];
+
+            $user = User::where('telegram_id', $telegram_user_id)->first();
+            if (!$user){
+                $user = User::query()->create([
+                    'telegram_id' => $telegram_user_id,
+                    'last_name' => $telegram_last_name,
+                    'first_name' => $telegram_first_name,
+                    'username' => $telegram_username,
+                    'verified_at' => now(),
+                ]);
+
+            }
+            $tokenResult = $user->createToken('Personal Access Token');
+            $token = $tokenResult->token;
+            $token->save();
+            return response()->json([
+                'message' => 'User registered successfully',
+                'access_token' => $tokenResult->accessToken,
+                'token_type' => 'Bearer',
+                'user' => $user,
+                'expires_at' => $tokenResult->token->expires_at->toDateTimeString(),
+            ]);
+        } else {
+            return response()->json(['error' => 'Invalid init data'], 400);
+        }
     }
 }

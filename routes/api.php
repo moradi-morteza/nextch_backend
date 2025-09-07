@@ -19,3 +19,6 @@ Route::post('verify_otp', [AuthController::class, 'verifyOtp']);
 
 Route::post('register', [AuthController::class, 'register']);
 Route::post('login', [AuthController::class, 'login']);
+
+# telegram mini app
+Route::get('/tmaAuthentication', [AuthController::class, 'tmaAuthentication']);
