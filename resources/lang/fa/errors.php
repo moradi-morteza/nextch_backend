@@ -1,0 +1,26 @@
+<?php
+
+return [
+    'custom_error_title' => 'خطا',
+    'validation_failed' => 'اعتبارسنجی ناموفق بود.',
+    'resource_not_found' => 'منبع پیدا نشد.',
+    'resource_not_found_message' => 'منبع درخواست شده یافت نشد.',
+    'page_not_found' => 'صفحه پیدا نشد.',
+    'page_not_found_message' => 'صفحه یا مسیر درخواست شده یافت نشد.',
+    'method_not_allowed' => 'روش غیر مجاز.',
+    'method_not_allowed_message' => 'روش HTTP مورد استفاده برای این مسیر مجاز نیست.',
+    'database_error' => 'خطای پایگاه داده.',
+    'database_error_message' => 'در حین پردازش درخواست پایگاه داده مشکلی پیش آمد.',
+    'unauthenticated' => 'احراز هویت ناموفق.',
+    'unauthenticated_message' => 'برای دسترسی به این منبع باید احراز هویت شوید.',
+    'http_error' => 'خطای HTTP.',
+    'server_error' => 'خطای سرور.',
+    'server_error_message' => 'یک خطای غیرمنتظره در سرور رخ داد.',
+    'invalid_image_type'=>'نوع فایل ارسال شده معتبر نمی باشد تصویر باید به فرمت jpg,jpeg,png باشند.',
+    'invalid_image_size_500'=>'سایز تصویر باید کمتر از 500 کیلوبایت باشد.',
+    'upload_image_failed'=>'آپلود تصویر با شکست مواجه شد.',
+    'invalid_image_data'=>'تصویر معتبر نمی باشد.',
+    'permission_denied'=>'دسترسی وجود ندارد.',
+    'source_header_not_found'=>'منبعی که برنامه از آن نصب شده مشخص نشده است.',
+    'session_not_found'=>'نشست یافت نشد.',
+];

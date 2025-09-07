@@ -1,0 +1,26 @@
+<?php
+
+return [
+    'custom_error_title' => 'Error',
+    'validation_failed' => 'Validation failed.',
+    'resource_not_found' => 'Resource not found.',
+    'resource_not_found_message' => 'The requested resource could not be located.',
+    'page_not_found' => 'Page not found.',
+    'page_not_found_message' => 'The requested route or page could not be located.',
+    'method_not_allowed' => 'Method not allowed.',
+    'method_not_allowed_message' => 'The HTTP method used is not allowed for this route.',
+    'database_error' => 'Database error.',
+    'database_error_message' => 'An issue occurred while processing the database request.',
+    'unauthenticated' => 'Unauthenticated.',
+    'unauthenticated_message' => 'You must be authenticated to access this resource.',
+    'http_error' => 'HTTP error.',
+    'server_error' => 'Server error.',
+    'server_error_message' => 'An unexpected server error occurred.',
+    'invalid_image_type'=>'Invalid image type, image should be jpeg,jpg,png',
+    'invalid_image_size_500'=>'Image size should be under 500kb',
+    'upload_image_failed'=>'Image upload failed',
+    'invalid_image_data'=>'Invalid image data',
+    'permission_denied'=>'Permission denied',
+    'source_header_not_found'=>'The source header is required.',
+    'session_not_found'=>'Session not found.',
+];
