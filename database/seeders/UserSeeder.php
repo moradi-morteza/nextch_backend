@@ -13,8 +13,7 @@ class UserSeeder extends Seeder
         DB::table('users')->insert([
             [
                 'id' => Str::uuid(),
-                'name' => 'علی',
-                'family' => 'رحیمی',
+                'full_name' => 'علی رحیمی',
                 'username' => 'doctor_nutrition',
                 'email' => 'ali.rahimi@example.com',
                 'phone' => '09120000001',
@@ -26,8 +25,7 @@ class UserSeeder extends Seeder
             ],
             [
                 'id' => Str::uuid(),
-                'name' => 'سارا',
-                'family' => 'مرادی',
+                'full_name' => 'سارا مرادی',
                 'username' => 'mechanic_car',
                 'email' => 'sara.moradi@example.com',
                 'phone' => '09120000002',
@@ -39,8 +37,7 @@ class UserSeeder extends Seeder
             ],
             [
                 'id' => Str::uuid(),
-                'name' => 'رضا',
-                'family' => 'کریمی',
+                'full_name' => 'رضا کریمی',
                 'username' => 'teacher_english',
                 'email' => 'reza.karimi@example.com',
                 'phone' => '09120000003',
@@ -52,8 +49,7 @@ class UserSeeder extends Seeder
             ],
             [
                 'id' => Str::uuid(),
-                'name' => 'مریم',
-                'family' => 'اصفهانی',
+                'full_name' => 'مریم اصفهانی',
                 'username' => 'psychologist',
                 'email' => 'maryam.esfahani@example.com',
                 'phone' => '09120000004',
@@ -65,8 +61,7 @@ class UserSeeder extends Seeder
             ],
             [
                 'id' => Str::uuid(),
-                'name' => 'حسین',
-                'family' => 'احمدی',
+                'full_name' => 'حسین احمدی',
                 'username' => 'fitness_trainer',
                 'email' => 'hossein.ahmadi@example.com',
                 'phone' => '09120000005',
@@ -78,8 +73,7 @@ class UserSeeder extends Seeder
             ],
             [
                 'id' => Str::uuid(),
-                'name' => 'الهام',
-                'family' => 'جعفری',
+                'full_name' => 'الهام جعفری',
                 'username' => 'painter_artist',
                 'email' => 'elham.jafari@example.com',
                 'phone' => '09120000006',
@@ -91,8 +85,7 @@ class UserSeeder extends Seeder
             ],
             [
                 'id' => Str::uuid(),
-                'name' => 'محمد',
-                'family' => 'شیرازی',
+                'full_name' => 'محمد شیرازی',
                 'username' => 'it_specialist',
                 'email' => 'mohammad.shirazi@example.com',
                 'phone' => '09120000007',
@@ -104,8 +97,7 @@ class UserSeeder extends Seeder
             ],
             [
                 'id' => Str::uuid(),
-                'name' => 'فاطمه',
-                'family' => 'کاظمی',
+                'full_name' => 'فاطمه کاظمی',
                 'username' => 'makeup_artist',
                 'email' => 'fatemeh.kazemi@example.com',
                 'phone' => '09120000008',
@@ -117,8 +109,7 @@ class UserSeeder extends Seeder
             ],
             [
                 'id' => Str::uuid(),
-                'name' => 'امیر',
-                'family' => 'نجفی',
+                'full_name' => 'امیر نجفی',
                 'username' => 'lawyer_expert',
                 'email' => 'amir.najafi@example.com',
                 'phone' => '09120000009',
@@ -130,8 +121,7 @@ class UserSeeder extends Seeder
             ],
             [
                 'id' => Str::uuid(),
-                'name' => 'لیلا',
-                'family' => 'حسینی',
+                'full_name' => 'لیلا حسینی',
                 'username' => 'chef_home',
                 'email' => 'leila.hosseini@example.com',
                 'phone' => '09120000010',
