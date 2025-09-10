@@ -39,7 +39,6 @@ class AppInit extends Command
         $this->info('Resetting and re-running migrations...');
         $this->call('migrate:reset');
         $this->call('migrate');
-        $this->call('db:seed');
 
         $this->info('Setting up Laravel Passport...');
         $this->call('passport:install');

@@ -20,5 +20,11 @@ Route::post('verify_otp', [AuthController::class, 'verifyOtp']);
 Route::post('register', [AuthController::class, 'register']);
 Route::post('login', [AuthController::class, 'login']);
 
+# Protected routes
+Route::middleware('auth:api')->group(function () {
+    Route::get('user', [AuthController::class, 'getUser']);
+    Route::post('logout', [AuthController::class, 'logout']);
+});
+
 # telegram mini app
 Route::get('/tmaAuthentication', [AuthController::class, 'tmaAuthentication']);

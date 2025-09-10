@@ -54,4 +54,14 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+    protected $appends = ['avatar_url'];
+    // Accessor for avatar_url
+    public function getAvatarUrlAttribute()
+    {
+        if ($this->avatar) {
+            return getUserAvatarUrl($this->id,$this->avatar);
+        }
+        return getEmptyAvatarUrl();
+    }
 }

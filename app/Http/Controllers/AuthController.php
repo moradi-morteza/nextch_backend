@@ -193,6 +193,57 @@ class AuthController extends Controller
         ]);
     }
 
+    /**
+     * Get authenticated user data
+     */
+    public function getUser(Request $request)
+    {
+        try {
+            $user = $request->user();
+            
+            return response()->json([
+                'success' => true,
+                'user' => [
+                    'id' => $user->id,
+                    'phone' => $user->phone,
+                    'email' => $user->email,
+                    'first_name' => $user->first_name,
+                    'last_name' => $user->last_name,
+                    'username' => $user->username,
+                    'telegram_id' => $user->telegram_id,
+                    'verified_at' => $user->verified_at,
+                    'created_at' => $user->created_at,
+                    'updated_at' => $user->updated_at,
+                ]
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to get user data'
+            ], 500);
+        }
+    }
+
+    /**
+     * Logout user and revoke token
+     */
+    public function logout(Request $request)
+    {
+        try {
+            $request->user()->token()->revoke();
+            
+            return response()->json([
+                'success' => true,
+                'message' => 'Successfully logged out'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to logout'
+            ], 500);
+        }
+    }
+
     # Telegram mini app
     # this method responsible to register and login users from telegram mini app
     public function tmaAuthentication(Request $request){
