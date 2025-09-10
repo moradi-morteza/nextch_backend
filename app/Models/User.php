@@ -54,13 +54,51 @@ class User extends Authenticatable
         'password' => 'hashed',
     ];
 
-    protected $appends = ['avatar_url'];
-    // Accessor for avatar_url
+    protected $appends = ['avatar_url', 'followers_count', 'following_count'];
+    
     public function getAvatarUrlAttribute()
     {
         if ($this->avatar) {
             return getUserAvatarUrl($this->id,$this->avatar);
         }
         return getEmptyAvatarUrl();
+    }
+
+    public function getFollowersCountAttribute()
+    {
+        return $this->followers()->count();
+    }
+
+    public function getFollowingCountAttribute()
+    {
+        return $this->following()->count();
+    }
+
+    public function followers()
+    {
+        return $this->belongsToMany(User::class, 'follows', 'following_id', 'follower_id')->withTimestamps();
+    }
+
+    public function following()
+    {
+        return $this->belongsToMany(User::class, 'follows', 'follower_id', 'following_id')->withTimestamps();
+    }
+
+    public function isFollowing($userId)
+    {
+        return $this->following()->where('following_id', $userId)->exists();
+    }
+
+    public function follow($userId)
+    {
+        if (!$this->isFollowing($userId) && $this->id !== $userId) {
+            return $this->following()->attach($userId);
+        }
+        return false;
+    }
+
+    public function unfollow($userId)
+    {
+        return $this->following()->detach($userId);
     }
 }

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -24,6 +25,20 @@ Route::post('login', [AuthController::class, 'login']);
 Route::middleware('auth:api')->group(function () {
     Route::get('user', [AuthController::class, 'getUser']);
     Route::post('logout', [AuthController::class, 'logout']);
+    
+    // User search and profile routes
+    Route::get('search/users', [UserController::class, 'search']);
+    Route::get('user/profile/{userId?}', [UserController::class, 'profile']);
+    
+    // Following system
+    Route::post('user/{userId}/follow', [UserController::class, 'follow']);
+    Route::post('user/{userId}/unfollow', [UserController::class, 'unfollow']);
+    
+    // Followers and following lists
+    Route::get('user/{userId}/followers', [UserController::class, 'followers']);
+    Route::get('user/{userId}/following', [UserController::class, 'following']);
+    Route::get('user/followers', [UserController::class, 'followers']); // Current user's followers
+    Route::get('user/following', [UserController::class, 'following']); // Current user's following
 });
 
 # telegram mini app
