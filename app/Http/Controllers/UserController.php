@@ -25,7 +25,7 @@ class UserController extends Controller
               ->orWhere('username', 'LIKE', "%{$query}%");
         })
         ->where('id', '!=', Auth::id())
-        ->select('id', 'full_name', 'username', 'avatar', 'bio')
+        ->select('id', 'full_name', 'username', 'avatar', 'bio', 'created_at')
         ->limit($limit)
         ->get();
 
@@ -156,7 +156,7 @@ class UserController extends Controller
         }
 
         $followers = $user->followers()
-            ->select('users.id', 'users.full_name', 'users.username', 'users.avatar', 'users.bio')
+            ->select('users.id', 'users.full_name', 'users.username', 'users.avatar', 'users.bio', 'users.created_at')
             ->offset($offset)
             ->limit($limit)
             ->get();
@@ -202,7 +202,7 @@ class UserController extends Controller
         }
 
         $following = $user->following()
-            ->select('users.id', 'users.full_name', 'users.username', 'users.avatar', 'users.bio')
+            ->select('users.id', 'users.full_name', 'users.username', 'users.avatar', 'users.bio', 'users.created_at')
             ->offset($offset)
             ->limit($limit)
             ->get();
@@ -224,6 +224,61 @@ class UserController extends Controller
                 'total' => $totalFollowing,
                 'has_more' => ($offset + $limit) < $totalFollowing
             ]
+        ]);
+    }
+
+    public function rate(Request $request, $conversationId): JsonResponse
+    {
+        $request->validate([
+            'rate' => 'required|integer|min:0|max:5'
+        ]);
+
+        $conversation = \App\Models\Conversation::find($conversationId);
+        if (!$conversation) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Conversation not found'
+            ], 404);
+        }
+
+        $currentUser = Auth::user();
+        
+        // Only the starter (asker) can rate the conversation
+        if ($conversation->starter_id !== $currentUser->id) {
+            return response()->json([
+                'success' => false,
+                'message' => 'You can only rate conversations you started'
+            ], 403);
+        }
+
+        // Conversation must be closed to be rated
+        if ($conversation->status !== 'closed') {
+            return response()->json([
+                'success' => false,
+                'message' => 'You can only rate closed conversations'
+            ], 422);
+        }
+
+        // Check if already rated
+        $existingRate = \App\Models\Rate::where('conversation_id', $conversationId)->first();
+        if ($existingRate) {
+            return response()->json([
+                'success' => false,
+                'message' => 'This conversation has already been rated'
+            ], 422);
+        }
+
+        $rate = \App\Models\Rate::create([
+            'user_id' => $currentUser->id,
+            'rated_user_id' => $conversation->recipient_id,
+            'conversation_id' => $conversationId,
+            'rate' => $request->input('rate')
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Rating submitted successfully',
+            'data' => $rate
         ]);
     }
 }

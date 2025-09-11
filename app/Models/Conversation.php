@@ -9,18 +9,29 @@ class Conversation extends Model
 {
     use HasUuids;
 
-    protected $appends = ['starter', 'recipient'];
+    protected $fillable = [
+        'id',
+        'starter_id',
+        'recipient_id',
+        'status',
+        'closed_at'
+    ];
 
-    // accessors to append starter & recipient data
-    public function getStarterAttribute()
+    protected static function boot(): void
     {
-        return $this->starter ? $this->starter : null;
+        parent::boot();
+
+        // Clear cache when conversation status changes to closed
+        static::updated(function ($conversation) {
+            if ($conversation->status === 'closed' && $conversation->getOriginal('status') !== 'closed') {
+                $recipient = User::find($conversation->recipient_id);
+                if ($recipient) {
+                    $recipient->clearCachedStats();
+                }
+            }
+        });
     }
 
-    public function getRecipientAttribute()
-    {
-        return $this->recipient ? $this->recipient : null;
-    }
 
     public function starter(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
@@ -30,5 +41,10 @@ class Conversation extends Model
     public function recipient(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(User::class, 'recipient_id');
+    }
+
+    public function messages(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(Message::class);
     }
 }

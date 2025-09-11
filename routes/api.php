@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ConversationController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -39,6 +40,13 @@ Route::middleware('auth:api')->group(function () {
     Route::get('user/{userId}/following', [UserController::class, 'following']);
     Route::get('user/followers', [UserController::class, 'followers']); // Current user's followers
     Route::get('user/following', [UserController::class, 'following']); // Current user's following
+    
+    // Rating system
+    Route::post('conversation/{conversationId}/rate', [UserController::class, 'rate']);
+    
+    // Conversation and messaging
+    Route::post('conversation/message/draft', [ConversationController::class, 'storeDraftMessage']);
+    Route::post('conversation/send', [ConversationController::class, 'sendConversation']);
 });
 
 # telegram mini app
