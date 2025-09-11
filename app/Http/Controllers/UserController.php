@@ -227,13 +227,14 @@ class UserController extends Controller
         ]);
     }
 
-    public function rate(Request $request, $conversationId): JsonResponse
+    public function rate(Request $request): JsonResponse
     {
         $request->validate([
+            'conversation_id' => 'required|exists:conversations,id',
             'rate' => 'required|integer|min:0|max:5'
         ]);
 
-        $conversation = \App\Models\Conversation::find($conversationId);
+        $conversation = \App\Models\Conversation::find($request->conversation_id);
         if (!$conversation) {
             return response()->json([
                 'success' => false,

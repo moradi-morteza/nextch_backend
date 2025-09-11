@@ -42,11 +42,17 @@ Route::middleware('auth:api')->group(function () {
     Route::get('user/following', [UserController::class, 'following']); // Current user's following
     
     // Rating system
-    Route::post('conversation/{conversationId}/rate', [UserController::class, 'rate']);
+    Route::post('conversation/rate', [UserController::class, 'rate']);
     
     // Conversation and messaging
     Route::post('conversation/message/draft', [ConversationController::class, 'storeDraftMessage']);
     Route::post('conversation/send', [ConversationController::class, 'sendConversation']);
+    Route::post('conversation/answer', [ConversationController::class, 'answerConversation']);
+    
+    // Conversation management
+    Route::get('conversations/persons', [ConversationController::class, 'getConversationPersons']);
+    Route::get('conversations/person/{personId}', [ConversationController::class, 'getPersonConversations']);
+    Route::get('conversation/{conversationId}', [ConversationController::class, 'show']);
 });
 
 # telegram mini app
