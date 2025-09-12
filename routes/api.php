@@ -48,6 +48,7 @@ Route::middleware('auth:api')->group(function () {
     Route::post('conversation/message/draft', [ConversationController::class, 'storeDraftMessage']);
     Route::post('conversation/send', [ConversationController::class, 'sendConversation']);
     Route::post('conversation/answer', [ConversationController::class, 'answerConversation']);
+    Route::post('conversation/continue', [ConversationController::class, 'continueConversation']);
     
     // Conversation management
     Route::get('conversations/persons', [ConversationController::class, 'getConversationPersons']);

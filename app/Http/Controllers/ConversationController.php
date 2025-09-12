@@ -141,8 +141,8 @@ class ConversationController extends Controller
             return response()->json(['error' => 'Conversation not found'], 404);
         }
 
-        // Update conversation status to pending
-        $conversation->update(['status' => 'pending']);
+        // Update conversation status to pending_recipient (waiting for recipient to respond)
+        $conversation->update(['status' => 'pending_recipient']);
 
         // Update all draft messages to pending
         $conversation->messages()->where('status', 'draft')->update(['status' => 'pending']);
@@ -175,7 +175,7 @@ class ConversationController extends Controller
             }, 'starter', 'recipient'])
             ->when($type === 'received', function($query) use ($currentUser) {
                 return $query->where('recipient_id', $currentUser->id)
-                            ->whereIn('status', ['pending', 'answered', 'closed']); // Exclude drafts for recipients
+                            ->whereIn('status', ['pending_recipient', 'pending_sender', 'answered', 'closed']); // Include all non-draft statuses
             })
             ->when($type === 'sent', function($query) use ($currentUser) {
                 return $query->where('starter_id', $currentUser->id);
@@ -199,6 +199,8 @@ class ConversationController extends Controller
                     'avatar' => $person->avatar,
                     'conversation_counts' => [
                         'draft' => 0,
+                        'pending_recipient' => 0,
+                        'pending_sender' => 0,
                         'pending' => 0,
                         'answered' => 0,
                         'closed' => 0
@@ -273,7 +275,7 @@ class ConversationController extends Controller
             ->when($type === 'received', function($query) use ($currentUser, $personId) {
                 return $query->where('recipient_id', $currentUser->id)
                             ->where('starter_id', $personId)
-                            ->whereIn('status', ['pending', 'answered', 'closed']); // Exclude drafts for recipients
+                            ->whereIn('status', ['pending_recipient', 'pending_sender', 'answered', 'closed']); // Include all non-draft statuses
             })
             ->when($type === 'sent', function($query) use ($currentUser, $personId) {
                 return $query->where('starter_id', $currentUser->id)
@@ -327,8 +329,8 @@ class ConversationController extends Controller
             return response()->json(['error' => 'Only recipient can answer this conversation'], 403);
         }
 
-        // Only pending conversations can be answered
-        if ($conversation->status !== 'pending') {
+        // Only pending_recipient conversations can be answered
+        if ($conversation->status !== 'pending_recipient') {
             return response()->json(['error' => 'This conversation cannot be answered'], 400);
         }
 
@@ -341,8 +343,56 @@ class ConversationController extends Controller
             'status' => 'sent'
         ]);
 
-        // Update conversation status to answered
-        $conversation->update(['status' => 'answered']);
+        // Update conversation status to pending_sender (waiting for starter to respond or close)
+        $conversation->update(['status' => 'pending_sender']);
+
+        return response()->json([
+            'success' => true,
+            'conversation' => $conversation->fresh(),
+            'message' => $message
+        ], 201);
+    }
+
+    /**
+     * Continue conversation (starter sends reply after recipient's answer)
+     */
+    public function continueConversation(Request $request)
+    {
+        $validated = $request->validate([
+            'conversation_id' => 'required|exists:conversations,id',
+            'message' => 'required|array',
+            'message.type' => 'required|string',
+            'message.body' => 'required|string'
+        ]);
+
+        $currentUser = Auth::user();
+        $conversation = Conversation::find($validated['conversation_id']);
+        
+        if (!$conversation) {
+            return response()->json(['error' => 'Conversation not found'], 404);
+        }
+
+        // Only starter can continue
+        if ($conversation->starter_id !== $currentUser->id) {
+            return response()->json(['error' => 'Only starter can continue this conversation'], 403);
+        }
+
+        // Only pending_sender conversations can be continued
+        if ($conversation->status !== 'pending_sender') {
+            return response()->json(['error' => 'This conversation cannot be continued'], 400);
+        }
+
+        // Create the continue message
+        $message = Message::create([
+            'conversation_id' => $validated['conversation_id'],
+            'sender_id' => $currentUser->id,
+            'type' => $validated['message']['type'],
+            'body' => $validated['message']['body'],
+            'status' => 'sent'
+        ]);
+
+        // Update conversation status back to pending_recipient (waiting for recipient again)
+        $conversation->update(['status' => 'pending_recipient']);
 
         return response()->json([
             'success' => true,
